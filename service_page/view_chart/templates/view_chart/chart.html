@@ -10,20 +10,20 @@
     <div style="width:80%; height:100%">
         {{graph|safe}}
     </div>
-
-    <div align="center">
-        <form action="" method="POST">{% csrf_token %}
-            <div class="input_group">
-                <input id="stockName" name="stockName"
-                type="text" class="form-control"
-                placeholder="주식 종목을 입력하세요">
-
-                <span class="input_group_btn">
-                    <button class="btn btn_default" type="submit">
-                    입력</button>
-                </span>
-            </div>
-        </form>
+    <div class="content">
+        <div align="center" class="stockDiv">
+            <form action="result2/" method="POST">{% csrf_token %}
+                <div class="input-group">
+                    <input id="stockNames" name="stockName"
+                    type="text" class="form-control"
+                    placeholder="주식 종목을 입력하세요">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit">
+                        입력</button>
+                    </span>
+                </div>
+            </form>
+        </div>
     </div>
 
 </body>

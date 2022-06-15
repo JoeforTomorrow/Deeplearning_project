@@ -5,7 +5,14 @@ import numpy as np
 import FinanceDataReader as fdr
 import datetime as dt
 
+from tensorflow.keras.models import load_model
+
 # Create your models here.
+
+class fitting:
+    
+    def __init__(self):
+        self.model = load_model('./view_chart/data/model.h5')
 
 class MakeSet:
     
@@ -75,6 +82,8 @@ class MakeSet:
         return self.price_fix()
     
 lst, stock, kospi, wd_ratio, etf, us10yt = MakeSet('삼성전자').all_in_one()
+
+md = fitting().model
 
 class Stock(models.Model):
     content = models.CharField(max_length = 255)

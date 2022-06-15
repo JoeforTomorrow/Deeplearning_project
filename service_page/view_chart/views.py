@@ -4,7 +4,8 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 
 # Create your views here.
 
@@ -104,9 +105,20 @@ def chart(request):
         {'graph':graphs}
     )
 
+# def index(request):
+#     return render(request, 'view_chart/chart.html')
 
-def calcStock(request):
+def inputStock(request):
     input_stock = request.POST['stockName']
-    stock_name = Stock('input_stock').all_in_one()[1]
+    stock_name = Stock(id=1, content=input_stock)
     stock_name.save()
-    return HttpResponse("주식 종목 =>"+input_stock)
+    return HttpResponseRedirect('/chart/')
+
+
+def calcStock1(request):
+    # models.MakeSet(models.Stock.content).
+    pass
+
+def calcStock2(request):
+    calc_stock = request.POST['stockName']
+    # md.predict(calc_stock)
