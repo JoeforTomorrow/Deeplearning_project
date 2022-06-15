@@ -7,6 +7,24 @@
     <title>Document</title>
 </head>
 <body>
-    <p>hello!</p>
+    <div style="width:80%; height:100%">
+        {{graph|safe}}
+    </div>
+
+    <div align="center">
+        <form action="" method="POST">{% csrf_token %}
+            <div class="input_group">
+                <input id="stockName" name="stockName"
+                type="text" class="form-control"
+                placeholder="주식 종목을 입력하세요">
+
+                <span class="input_group_btn">
+                    <button class="btn btn_default" type="submit">
+                    입력</button>
+                </span>
+            </div>
+        </form>
+    </div>
+
 </body>
 </html>

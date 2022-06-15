@@ -75,3 +75,6 @@ class MakeSet:
         return self.price_fix()
     
 lst, stock, kospi, wd_ratio, etf, us10yt = MakeSet('삼성전자').all_in_one()
+
+class Stock(models.Model):
+    content = models.CharField(max_length = 255)
