@@ -9,11 +9,6 @@ from tensorflow.keras.models import load_model
 
 # Create your models here.
 
-class fitting:
-    
-    def __init__(self):
-        self.model = load_model('./view_chart/data/model.h5')
-
 class MakeSet:
     
     def __init__(self,txt):
@@ -213,9 +208,10 @@ md = Fitting().md
 
 lst, stock, kospi, etf, wd_ratio, us10yt = MakeSet('삼성전자').all_in_one()
 
-md = fitting().model
-
 class Stock(models.Model):
     stock_name = models.CharField(max_length = 255, default='')
-    stock_price_tm = models.CharField(max_length = 255, default='')
-    stock_price_td = models.CharField(max_length = 255, default='')
+    stock_price_tm = models.IntegerField(max_length = 255, default='0')
+    stock_price_td = models.IntegerField(max_length = 255, default='0')
+    
+    def __str__(self):
+        return f'[{self.stock_name}] {self.stock_price_tm} {self.stock_price_td}'
