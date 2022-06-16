@@ -109,16 +109,18 @@ def chart(request):
 #     return render(request, 'view_chart/chart.html')
 
 def inputStock(request):
+
     input_stock = request.POST['stockName']
-    stock_name = Stock(id=1, content=input_stock)
+
+    stock_name = Stock(id=1, stock_name=input_stock)
     stock_name.save()
+    
+    dataset, origin, today = PredictSet(input_stock).all_in_one()
+    stock_result = origin + md.predict(dataset) * origin
+    stock_price = Stock(id=1, stock_price_tm=stock_result)
+    stock_price.save()
+    
+    today_price = Stock(id=1, stock_price_td=today)
+    today_price.save()
+    
     return HttpResponseRedirect('/chart/')
-
-
-def calcStock1(request):
-    # models.MakeSet(models.Stock.content).
-    pass
-
-def calcStock2(request):
-    calc_stock = request.POST['stockName']
-    # md.predict(calc_stock)

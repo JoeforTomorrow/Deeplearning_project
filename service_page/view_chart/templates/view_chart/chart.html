@@ -7,12 +7,14 @@
     <title>Document</title>
 </head>
 <body>
+    <div align='center'>
     <div style="width:80%; height:100%">
         {{graph|safe}}
     </div>
+    </div>
     <div class="content">
         <div align="center" class="stockDiv">
-            <form action="result2/" method="POST">{% csrf_token %}
+            <form action="result/" method="POST">{% csrf_token %}
                 <div class="input-group">
                     <input id="stockNames" name="stockName"
                     type="text" class="form-control"
