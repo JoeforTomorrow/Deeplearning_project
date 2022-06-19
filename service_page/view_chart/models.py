@@ -7,7 +7,93 @@ import datetime as dt
 
 from tensorflow.keras.models import load_model
 
+import re
+from konlpy.tag import Okt
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from keras.preprocessing.text import Tokenizer
+import requests
+import pickle
+
 # Create your models here.
+
+with open('./view_chart/data/texts.pkl','rb') as a:
+    X_train = pickle.load(a)
+
+# from keras.preprocessing.text import Tokenizer
+
+vocab_size = 40000
+tokenizer = Tokenizer(vocab_size+1, oov_token = 'OOV') 
+tokenizer.fit_on_texts(X_train)
+X_train = tokenizer.texts_to_sequences(X_train)
+
+
+class NewsAnalysis:
+    
+    def __init__(self,search_word):
+        
+        self.client_id = "bzW3U49FrZy_ijT7D5k3" #1.에서 취득한 아이디 넣기
+        self.client_secret = "_ojpOWgHKf"  #1. 에서 취득한 키 넣기
+        self.search_word = search_word #검색어
+        self.encode_type = 'json' #출력 방식 json 또는 xml
+        self.max_display = 100 #출력 뉴스 수
+        self.sort = 'date' #결과값의 정렬기준 시간순 date, 관련도 순 sim
+        self.start = 1 # 출력 위치
+        self.url = f"https://openapi.naver.com/v1/search/news.{self.encode_type}?query={search_word}&display={str(int(self.max_display))}&start={str(int(self.start))}&sort={self.sort}"
+
+        
+        #헤더에 아이디와 키 정보 넣기 & HTTP요청 보내기
+        
+    def requestHttp(self):
+        
+        self.headers = {'X-Naver-Client-Id' : self.client_id,
+                   'X-Naver-Client-Secret': self.client_secret
+                   }        
+        
+        self.r = requests.get(self.url, headers=self.headers)
+        #요청 결과 보기 200 이면 정상적으로 요청 완료
+        return self.r
+
+    def clean_html(self,x):
+        self.x = re.sub("\&\w*\;","",x)
+        self.x = re.sub("<.*?>","",self.x)
+        return self.x
+    
+    
+    def to_dataframe_re_apply(self):
+        self.df = pd.DataFrame(self.requestHttp().json()['items']) # 데이터 프레임으로 만들기
+        self.df['title'] = self.df['title'].apply(lambda x: self.clean_html(x))
+        self.df['description'] = self.df['description'].apply(lambda x: self.clean_html(x))
+        return self.df
+    
+
+    
+    def news_predict(self):
+        okt = Okt()
+        model = load_model('./view_chart/data/news_predict_v1.h5')
+        stopwords = ['의', '가', '이', '은', '들', '는', '좀', '잘', '걍', '과', '도', '를', '으로', '자', '에', '와', '한', '하다']
+        morphed = []
+        dataframe = self.to_dataframe_re_apply()
+        for i in range(len(dataframe)):
+            new_sentence = re.sub(r'[^ㄱ-ㅎㅏ-ㅣ가-힣 ]','', dataframe['title'][i])
+            new_sentence = re.sub("[\(\[].*?[\)\]]",'', new_sentence)
+            new_sentence = okt.morphs(new_sentence, stem=True) # 토큰화
+            new_sentence = [word for word in new_sentence if not word in stopwords] # 불용어 제거
+            encoded = tokenizer.texts_to_sequences([new_sentence]) # 정수 인코딩
+            pad_new = pad_sequences(encoded, maxlen = 30)# 패딩
+            score = float(model.predict(pad_new,verbose=0)) # 예측
+            if (score > 0.5):
+#                 print(dataframe['title'][i])
+#                 print("{0:}번 째 기사는 {1:.2f}% 확률로 긍정적 기사입니다.".format((i+1), (score * 100)))
+                morphed.append('긍정적인 기사')
+            else : 
+#                 print(dataframe['title'][i])
+#                 print("{0:}번 째 기사는 {1:.2f}% 확률로 부정적 기사입니다.".format((i+1), (1 - score) * 100))
+                morphed.append('부정적인 기사')
+        dataframe['Prediction'] = morphed
+        
+        
+        return dataframe
+
 
 class MakeSet:
     
@@ -210,8 +296,17 @@ lst, stock, kospi, etf, wd_ratio, us10yt = MakeSet('삼성전자').all_in_one()
 
 class Stock(models.Model):
     stock_name = models.CharField(max_length = 255, default='')
-    stock_price_tm = models.IntegerField(max_length = 255, default='0')
-    stock_price_td = models.IntegerField(max_length = 255, default='0')
+    stock_price_tm = models.IntegerField(default='0')
+    stock_price_td = models.IntegerField(default='0')
+    stock_text = models.CharField(max_length=255, default='')
     
     def __str__(self):
-        return f'[{self.stock_name}] {self.stock_price_tm} {self.stock_price_td}'
+        return f'[{self.stock_name}] {self.stock_price_tm} {self.stock_price_td} {self.stock_text}'
+
+class NewsText(models.Model):
+    stock_text = models.CharField(max_length=255,default='')
+    stock_title = models.TextField()
+    stock_url = models.TextField()
+    
+    def __str__(self):
+        return f'[{self.stock_text}] {self.stock_title} {self.stock_url}'
