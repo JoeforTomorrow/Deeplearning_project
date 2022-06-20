@@ -292,7 +292,7 @@ class Fitting:
         
 md = Fitting().md
 
-lst, stock, kospi, etf, wd_ratio, us10yt = MakeSet('삼성전자').all_in_one()
+# lst, stock, kospi, etf, wd_ratio, us10yt = MakeSet('삼성전자').all_in_one()
 
 class Stock(models.Model):
     stock_name = models.CharField(max_length = 255, default='')

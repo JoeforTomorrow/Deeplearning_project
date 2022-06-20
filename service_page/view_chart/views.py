@@ -10,6 +10,8 @@ from django.urls import reverse
 # Create your views here.
 
 def chart(request):
+    txt = str(Stock.objects.filter(id=1).values('stock_name')).split("'")[3]
+    lst, stock, kospi, etf, wd_ratio, us10yt = MakeSet(txt).all_in_one()
     
     df = pd.DataFrame([stock,kospi,etf,wd_ratio,us10yt]).T
     df.index = lst.astype(str)

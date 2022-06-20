@@ -38,7 +38,7 @@
         <div class="card mb-4" style="background-color:rgb(250, 144, 193)">
             <div class="card-header">
                 <form action="result/" method="POST" style="float:center; padding: 0px 300px 0px 0px;">{% csrf_token %}
-                    <span style="padding: 0px 0px 0px 300px;"> <strong> 😘주식 예측✨ </strong> <strong> 종목 이름💞 </strong> {{stock.stock_name}} <strong> 지난 종가💸 </strong> {{stock.stock_price_td}} <strong> 예상 종가💰 </strong> {{stock.stock_price_tm}} </span>            
+                    <span style="padding: 0px 0px 0px 300px;"> <strong> 😘주식 예측✨ </strong> <strong>  {{stock.stock_name}}💞 </strong> <strong> 지난 종가💸 </strong> {{stock.stock_price_td}} <strong> 예상 종가💰 </strong> {{stock.stock_price_tm}} </span>            
                     <div class="input-group"style="width:300px; zoom:70%; float:right;">
                         <input id="stockNames" name="stockName"
                         type="text" class="form-control"
@@ -128,21 +128,23 @@
    
                             <b>{{stock.stock_name}} 📰관련 기사 목록</b>
                                 <div class="small text-muted"><span style="color:rgb(60,60,60)">{{stock.stock_text}}</span></div>
-                            </div>
+                        </div>
     
-                            <div class="card-body" style="height:800px; overflow: auto;">
+                        <div class="card-body" style="height:800px; overflow: auto;">
                         
                                 {% for text in texts %}
                                 <li class="card-text"><a href = {{text.stock_url}} target = "_blank" style="text-decoration-line: none; color:black;"> {{text.stock_title}}</a></li>
-                                </body>
+                                
                                 {% endfor %}
-                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </body>
         <!-- Footer-->
-        <footer class="py-5 bg-dark">
-            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2022</p></div>
+        <footer style="background-color:rgb(250, 114, 193); height:80px;">
+            <div class="container"><p align="center" style="padding: 15px 0px 0px 0px;">Copyright &copy; Your Website 2022</p></div>
         </footer>
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
